@@ -1,4 +1,4 @@
-from lib.checker import SpellChecker
+from lib.Corrector import Corrector
 from test import Tester
 
 from optparse import OptionParser
@@ -12,17 +12,25 @@ CORPUS = "corpus.txt"
 
 def main():
     options = read_commands()
-    checker = SpellChecker(options.corpus)
+    corrector = Corrector(options.corpus)
 
     if options.test:
-        tester = Tester(checker, options.verbose)
-        tester.run()
-    else:
+        Tester(corrector, options.verbose).run()
+        exit(0)
+
+    if options.output:
         output = open(options.output, 'w')
 
-        for word in options.input:
-            output.write(checker.correct(word) + " ")
+    for word in options.input:
+        suggestion = corrector.correct(word)
 
+        if options.output:
+            output.write(suggestion + ' ')
+        else:
+            print(suggestion)
+
+    if options.output:
+        output.write("\n")
         output.close()
 
 
@@ -44,10 +52,7 @@ def read_commands():
         with open(options.input) as f:
             options.input = f.read().splitlines()
     elif not options.test:
-        options.input = input("Text to analyse: ").split()
-
-    if not options.output:
-        options.output = "corrected.txt"
+        options.input = input().split()
 
     return options
 
