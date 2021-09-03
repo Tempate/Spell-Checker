@@ -1,8 +1,8 @@
 import time
 
-TEST_FILE_NAMES = [
-    "tests/test1.txt",
-    "tests/test2.txt"
+TEST_FILENAMES = [
+    "tests/test1.txt"
+    # "tests/test2.txt"
 ]
 
 
@@ -14,7 +14,7 @@ class Tester:
     def run(self):
         self.unit_tests()
 
-        for filename in TEST_FILE_NAMES:
+        for filename in TEST_FILENAMES:
             self.spell_test(self.parse(filename))
 
     def unit_tests(self):
@@ -27,11 +27,9 @@ class Tester:
         assert self.checker.correct('peotryy') =='poetry'                 # transpose + delete
         assert self.checker.correct('word') == 'word'                     # known
         assert self.checker.correct('quintessential') == 'quintessential' # unknown
-        #assert 0.065 < self.checker.likelihood('the') < 0.08
-        return 'unit_tests pass'
 
     def spell_test(self, tests):
-        "Run the spell checker on all (right, wrong) pairs."
+        # Run the spell checker on all (right, wrong) pairs.
         start = time.time()
         correct, unknown = 0, 0
 
