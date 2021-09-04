@@ -1,5 +1,7 @@
 from .Soundex import Soundex
+from .SpeedCop import SpeedCop
 
+from fastDamerauLevenshtein import damerauLevenshtein
 from collections import Counter
 import re
 
@@ -11,6 +13,9 @@ class Corrector:
 
         self.soundex_table = Soundex().gen_table(self.corpus.keys())
 
+        self.scop = SpeedCop()
+        self.scop_table, self.scop_keys = self.scop.gen_table(self.corpus.keys())
+
     def correct(self, word): 
         return max(self.candidates(word), key=self.likelihood)
 
@@ -18,14 +23,20 @@ class Corrector:
         if word in self.corpus:
             return [word]
 
+        # Find typing errors that are an edit away 
+        close = self.scop.similar(self.scop_table, self.scop_keys, word, 20)
+
+        if close := self.inbounds(word, close, 1):
+            return close
+
         # Words that are one edit away
         edits = self.edit([word])
 
         if edits_known := self.known(edits):
             return edits_known
 
-        # We check to see if there are similar-sounding words
-        # that are not too different
+        # We check to see if there are similar-sounding 
+        # words that are not too different
         if similar := self.inbounds(word, self.soundex(word), 2):
             return similar
 
@@ -83,22 +94,9 @@ class Corrector:
         new_words = set()
 
         for word in words:
-            dist = self.distance(target, word)
+            dist = damerauLevenshtein(target, word, similarity=False)
 
             if dist <= limit:
                 new_words.add(word)
 
         return new_words
-
-    @staticmethod
-    def distance(word1, word2):
-        if word1 == word2:
-            return 0
-
-        lens = [len(word1), len(word2)]
-        dist = max(lens) - min(lens)
-
-        for i in range(min(lens)):
-            dist += word1[i] != word2[i]
-
-        return dist
