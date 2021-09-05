@@ -16,10 +16,11 @@ class Corrector:
         self.scop = SpeedCop()
         self.scop_table, self.scop_keys = self.scop.gen_table(self.corpus.keys())
 
-    def correct(self, word): 
-        return max(self.candidates(word), key=self.likelihood)
+    def correct(self, word):
+        suggestion = max(self.candidates(word.lower()), key=self.likelihood)
+        return suggestion.title() if word[0].isupper() else suggestion
 
-    def candidates(self, word):       
+    def candidates(self, word):
         if word in self.corpus:
             return [word]
 

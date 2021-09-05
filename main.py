@@ -18,20 +18,35 @@ def main():
         Tester(corrector, options.verbose).run()
         exit(0)
 
+    corrected_text = correct(options.input, corrector).lstrip()
+
     if options.output:
         output = open(options.output, 'w')
-
-    for word in options.input:
-        suggestion = corrector.correct(word)
-
-        if options.output:
-            output.write(suggestion + ' ')
-        else:
-            print(suggestion)
-
-    if options.output:
-        output.write("\n")
+        output.write(corrected_text)
         output.close()
+    else:
+        print(corrected_text)
+
+
+def correct(text, corrector):
+    new_text = ''
+    word = ''
+
+    for char in text:
+        if char.isalpha():
+            word += char
+            continue
+
+        if word:
+            new_text += corrector.correct(word)
+            word = ''
+
+        new_text += char
+
+    if word:
+        new_text += corrector.correct(word)
+
+    return new_text
 
 
 def read_commands():
@@ -50,9 +65,9 @@ def read_commands():
 
     if options.input:
         with open(options.input) as f:
-            options.input = f.read().splitlines()
+            options.input = f.read()
     elif not options.test:
-        options.input = input().split()
+        options.input = input()
 
     return options
 
