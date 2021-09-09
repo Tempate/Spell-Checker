@@ -29,7 +29,7 @@ def main():
 
 
 def correct(text, corrector):
-    return re.sub('\w+', corrector, text)
+    return re.sub('\w+', lambda m: corrector(m.group()), text)
 
 
 def read_commands():
