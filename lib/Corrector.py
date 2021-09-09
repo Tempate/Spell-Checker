@@ -18,7 +18,11 @@ class Corrector:
 
     def correct(self, word):
         suggestion = max(self.candidates(word.lower()), key=self.likelihood)
-        return suggestion.title() if word[0].isupper() else suggestion
+
+        if word[0].isupper():
+            return suggestion.title()
+
+        return suggestion
 
     def candidates(self, word):
         if word in self.corpus:
