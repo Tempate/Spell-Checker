@@ -18,7 +18,7 @@ def main():
         Tester(corrector, options.verbose).run()
         exit(0)
 
-    corrected_text = correct(options.input, corrector).lstrip()
+    corrected_text = correct(options.input, corrector.correct)
 
     if options.output:
         output = open(options.output, 'w')
@@ -29,24 +29,7 @@ def main():
 
 
 def correct(text, corrector):
-    new_text = ''
-    word = ''
-
-    for char in text:
-        if char.isalpha():
-            word += char
-            continue
-
-        if word:
-            new_text += corrector.correct(word)
-            word = ''
-
-        new_text += char
-
-    if word:
-        new_text += corrector.correct(word)
-
-    return new_text
+    return re.sub('\w+', corrector, text)
 
 
 def read_commands():
