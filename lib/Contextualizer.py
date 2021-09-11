@@ -10,8 +10,8 @@ class Contextualizer:
         self.words = set([token for token in self.tokens if token not in SEPARATORS])
 
         self.unigrams = self.ngrams(self.tokens, 1) 
-        self.bigrams   = self.ngrams(self.tokens, 2)
-        self.trigrams  = self.ngrams(self.tokens, 3)
+        self.bigrams  = self.ngrams(self.tokens, 2)
+        self.trigrams = self.ngrams(self.tokens, 3)
 
     def parse(self, text):
         # 'Hello. This is it.' => ['<s>', 'hello', '</s>', '<s>', 'this', 'is', 'it', '</s>']
@@ -21,7 +21,7 @@ class Contextualizer:
         try:
             if context[-1] == '<s>':
                 # Probability that word starts a sentence
-                return self.bigrams[('<s>', word)] / self.frequency['<s>']
+                return self.bigrams[('<s>', word)] / self.frequency('<s>')
 
             bigram = tuple(context[-2:])
             return self.trigrams[(*bigram, word)] / self.bigrams[bigram]
