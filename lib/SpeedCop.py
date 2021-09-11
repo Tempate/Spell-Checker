@@ -1,8 +1,12 @@
 class SpeedCop:
-    def similar(self, table, keys, word, bound):
+    def __init__(self, words):
+        self.table = self.gen_table(words)
+        self.table_keys = sorted(self.table.keys())
+
+    def similar(self, word, bound):
         code = self.gen_code(word)
 
-        keys.append(code)
+        keys = sorted(self.table_keys + [code])
         index = keys.index(code)
         
         neighbors_keys = keys[max(index-bound, 0):index+bound]
@@ -10,7 +14,7 @@ class SpeedCop:
 
         for key in neighbors_keys:
             try:
-                neighbors.add(table[key])
+                neighbors.add(self.table[key])
             except KeyError:
                 continue
 
@@ -18,18 +22,18 @@ class SpeedCop:
 
     def gen_table(self, words):
         table = {}
-        keys = set()
 
         for word in words:
             code = self.gen_code(word)
-
             table[code] = word
-            keys.add(code)
 
-        return table, sorted(keys)
+        return table
 
     @staticmethod
     def gen_code(word):
+        if not word:
+            return ""
+
         code = word[0]
 
         consonants = []
