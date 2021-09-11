@@ -1,14 +1,14 @@
 import time
 
 TEST_FILENAMES = [
-    "tests/test1.txt"
-    # "tests/test2.txt"
+    "tests/test1.txt",
+    "tests/test2.txt"
 ]
 
 
 class Tester:
-    def __init__(self, checker, verbose):
-        self.checker = checker
+    def __init__(self, corrector, verbose):
+        self.correct = corrector.correct
         self.verbose = verbose
 
     def run(self):
@@ -18,30 +18,30 @@ class Tester:
             self.spell_test(self.parse(filename))
 
     def unit_tests(self):
-        assert self.checker.correct('speling') == 'spelling'              # insert
-        assert self.checker.correct('korrectud') == 'corrected'           # replace 2
-        assert self.checker.correct('bycycle') == 'bicycle'               # replace
-        assert self.checker.correct('inconvient') == 'inconvenient'       # insert 2
-        assert self.checker.correct('arrainged') == 'arranged'            # delete
-        assert self.checker.correct('peotry') =='poetry'                  # transpose
-        assert self.checker.correct('peotryy') =='poetry'                 # transpose + delete
-        assert self.checker.correct('word') == 'word'                     # known
-        assert self.checker.correct('quintessential') == 'quintessential' # unknown
+        assert self.correct('speling') == 'spelling'              # insert
+        assert self.correct('korrectud') == 'corrected'           # replace 2
+        assert self.correct('bycycle') == 'bicycle'               # replace
+        assert self.correct('inconvient') == 'inconvenient'       # insert 2
+        assert self.correct('arrainged') == 'arranged'            # delete
+        assert self.correct('peotry') =='poetry'                  # transpose
+        assert self.correct('peotryy') =='poetry'                 # transpose + delete
+        assert self.correct('word') == 'word'                     # known
+        assert self.correct('quintessential') == 'quintessential' # unknown
 
     def spell_test(self, tests):
-        # Run the spell checker on all (right, wrong) pairs.
+        # Run the spell correct on all (right, wrong) pairs.
         start = time.time()
         correct, unknown = 0, 0
 
         for right, wrong in tests:
-            word = self.checker.correct(wrong)
+            word = self.correct(wrong)
             
             if word == right:
                 correct += 1
                 
             elif self.verbose:
                 print('correct({}) => {} ({}); expected {} ({})'.format(
-                    wrong, word, self.checker.corpus[word], right, self.checker.corpus[right]
+                    wrong, word, self.correct.corpus[word], right, self.correct.corpus[right]
                 ))
 
         duration = time.time() - start
