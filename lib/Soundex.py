@@ -10,6 +10,9 @@ CODES = {
 CODE_LENGTH = 4
 
 class Soundex:
+    def __init__(self, words):
+        self.table = self.gen_table(words)
+
     def gen_table(self, words):
         table = {}
 
@@ -23,6 +26,11 @@ class Soundex:
 
         return table
 
+    def candidates(self, word):
+        try:
+            return self.table[self.gen_code(word)]
+        except KeyError:
+            return []
 
     @staticmethod
     def gen_code(word):
