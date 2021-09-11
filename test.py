@@ -2,7 +2,8 @@ import time
 
 TEST_FILENAMES = [
     "tests/test1.txt",
-    "tests/test2.txt"
+    "tests/test2.txt",
+    "tests/test3.txt"
 ]
 
 
