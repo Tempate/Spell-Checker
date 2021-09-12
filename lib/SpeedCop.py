@@ -1,20 +1,21 @@
 class SpeedCop:
     def __init__(self, words):
         self.table = self.gen_table(words)
-        self.table_keys = sorted(self.table.keys())
+        self.table_keys = list(self.table.keys())
 
     def similar(self, word, bound):
         code = self.gen_code(word)
 
-        keys = sorted(self.table_keys + [code])
-        index = keys.index(code)
+        # Find the 2*bound closest codes
+        codes = sorted(set(self.table_keys + [code]))
+        index = codes.index(code)
         
-        neighbors_keys = keys[max(index-bound, 0):index+bound]
+        neighbors_codes = codes[max(index-bound, 0):index+bound]
         neighbors = set()
 
-        for key in neighbors_keys:
+        for code in neighbors_codes:
             try:
-                neighbors.add(self.table[key])
+                neighbors.add(self.table[code])
             except KeyError:
                 continue
 
@@ -24,8 +25,7 @@ class SpeedCop:
         table = {}
 
         for word in words:
-            code = self.gen_code(word)
-            table[code] = word
+            table[self.gen_code(word)] = word
 
         return table
 
@@ -36,16 +36,14 @@ class SpeedCop:
 
         code = word[0]
 
-        consonants = []
-        vowels = []
+        vowels = ''
 
         for letter in word:
-            dest = vowels if letter in 'aeiou' else consonants
+            dest = vowels if letter in 'aeiou' else code
 
             if letter not in dest and letter != word[0]:
-                dest.append(letter)
+                dest += letter
 
-        code += "".join(consonants)
-        code += "".join(vowels)
+        code += vowels
         
         return code
