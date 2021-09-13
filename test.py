@@ -1,5 +1,8 @@
 import time
 
+from tests.dealer_tests import test_dealer
+from tests.contextualizer_tests import test_contextualizer
+
 
 TEST_FILENAMES_WITHOUT_CONTEXT = [
     "tests/without_context/test1.txt",
@@ -14,38 +17,45 @@ TEST_FILENAMES_WITH_CONTEXT = [
 
 class Tester:
     def __init__(self, corrector, verbose):
-        self.correct = corrector.correct
+        self.corrector = corrector
         self.verbose = verbose
 
     def run(self):
-        self.unit_tests()
+        self.basic_tests()
 
-        """
+        test_dealer(self.corrector.dealer)
+        test_contextualizer(self.corrector.contextualizer)
+
         for filename in TEST_FILENAMES_WITHOUT_CONTEXT:
-            self.spell_test(self.parse(filename, False), False)
-        """
+            self.corrector_test(self.parse(filename, False), False)
 
         for filename in TEST_FILENAMES_WITH_CONTEXT:
-            self.spell_test(self.parse(filename, True), True)
+            self.corrector_test(self.parse(filename, True), True)
 
-    def unit_tests(self):
-        assert self.correct('speling') == 'spelling'              # insert
-        assert self.correct('korrectud') == 'corrected'           # replace 2
-        assert self.correct('bycycle') == 'bicycle'               # replace
-        assert self.correct('inconvient') == 'inconvenient'       # insert 2
-        assert self.correct('arrainged') == 'arranged'            # delete
-        assert self.correct('peotry') =='poetry'                  # transpose
-        assert self.correct('peotryy') =='poetry'                 # transpose + delete
-        assert self.correct('word') == 'word'                     # known
-        assert self.correct('quintessential') == 'quintessential' # unknown
+    def basic_tests(self):
+        # simple
+        assert self.corrector.correct('speling') == 'spelling'              # insert
+        assert self.corrector.correct('arrainged') == 'arranged'            # delete
+        assert self.corrector.correct('bycycle') == 'bicycle'               # replace
+        assert self.corrector.correct('peotry') =='poetry'                  # transpose
 
-    def spell_test(self, tests, with_context):
-        # Run the spell correct on all (right, wrong) pairs.
+        assert self.corrector.correct('word') == 'word'                     # known
+        assert self.corrector.correct('quintessential') == 'quintessential' # unknown
+        
+        # double
+        assert self.corrector.correct('inconvient') == 'inconvenient'       # insert
+        assert self.corrector.correct('korrectud') == 'corrected'           # replace
+        assert self.corrector.correct('peotryy') =='poetry'                 # transpose + delete
+
+        print('[+] Basic tests passed successfully')
+        
+    def corrector_test(self, tests, with_context):
+        # Run the corrector on all (right, wrong) pairs.
         start = time.time()
         correct, unknown = 0, 0
 
         for right, wrong in tests:
-            corrected = self.correct(wrong, with_context)
+            corrected = self.corrector.correct(wrong, with_context)
             
             if corrected == right:
                 correct += 1
@@ -58,7 +68,7 @@ class Tester:
 
         print('{:.0%} out of {} corrected at {:.0f} words per second '
             .format(correct / test_count, test_count, test_count / duration))
-    
+
     @staticmethod
     def parse(filename, with_context=False):
         tests = []
