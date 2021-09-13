@@ -2,9 +2,6 @@ from lib.Corrector import Corrector
 from test import Tester
 
 from optparse import OptionParser
-from collections import Counter
-
-import regex as re
 
 
 CORPUS = "corpus.txt"

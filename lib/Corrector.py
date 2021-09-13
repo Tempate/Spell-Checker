@@ -2,8 +2,6 @@
 from .Contextualizer import Contextualizer, SEPARATORS
 from .Dealer import Dealer
 
-from fastDamerauLevenshtein import damerauLevenshtein
-from collections import Counter
 import regex as re
 
 
