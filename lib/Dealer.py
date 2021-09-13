@@ -15,11 +15,11 @@ class Dealer:
         self.speedcop = SpeedCop(self.words)
 
     def candidates(self, word):
-        if word in self.words:
+        if self.known(set([word])):
             return [word]
 
-        # Find typing errors that are an edit away 
-        close = self.speedcop.similar(word, 20)
+        # Find typing errors that are an edit away
+        close = self.speedcop.similar(word, 50)
 
         if close := self.inbounds(word, close, 1):
             return close

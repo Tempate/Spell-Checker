@@ -26,7 +26,7 @@ class Contextualizer:
             bigram = tuple(context[-2:])
             return self.trigrams[(*bigram, word)] / self.bigrams[bigram]
         except KeyError:
-            return 0
+            return self.frequency(word) / len(self.words)
 
     def frequency(self, word):
         try:
